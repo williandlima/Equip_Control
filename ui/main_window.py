@@ -12,12 +12,14 @@ from PyQt5.QtWidgets import (
 )
 
 import config
+from core import audit_log
 from core.auth import Sessao
 from core.logger import get_logger
 from ui.alertas_widget import AlertasWidget
 from ui.dialogs import UsuariosManagerDialog
 from ui.emprestimos_tab import EmprestimosTab
 from ui.equipamentos_tab import EquipamentosTab
+from ui.logs_tab import LogsTab
 
 logger = get_logger(__name__)
 
@@ -62,12 +64,19 @@ class MainWindow(QMainWindow):
         self.abas.addTab(self.aba_equipamentos, "Equipamentos")
         self.abas.addTab(self.aba_emprestimos, "Empréstimos")
         self.abas.addTab(self.aba_alertas, "Alertas")
+        if Sessao.is_admin():
+            self.aba_logs = LogsTab()
+            self.abas.addTab(self.aba_logs, "Logs")
+        else:
+            self.aba_logs = None
         self.abas.currentChanged.connect(self._ao_trocar_aba)
         self.setCentralWidget(self.abas)
 
     def _ao_trocar_aba(self, _indice: int):
         self.aba_equipamentos.carregar()
         self.aba_emprestimos.carregar()
+        if self.aba_logs is not None:
+            self.aba_logs.carregar()
 
     def _montar_tray(self):
         self._tray = None
@@ -103,6 +112,7 @@ class MainWindow(QMainWindow):
         if resposta != QMessageBox.Yes:
             return
         logger.info("Logout: %s", Sessao.usuario_atual.login)
+        audit_log.registrar("logout", "Logout realizado")
         Sessao.logout()
         self.close()
         self._on_logout()

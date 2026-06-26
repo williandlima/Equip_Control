@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 data/*.xlsx
 data/*.xlsx.lock
+data/fichas/
 logs/*.log
 logs/*.log.*

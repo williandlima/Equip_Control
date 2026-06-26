@@ -17,11 +17,12 @@ from PyQt5.QtWidgets import (
 )
 
 import config
-from core import excel_db
+from core import audit_log, excel_db
 from core.auth import Sessao
 from core.logger import get_logger
 from core.models import Emprestimo, Equipamento, StatusEmprestimo, StatusEquipamento
 from ui.dialogs import EmprestimoDialog, EquipamentoDialog
+from ui.pdf_helpers import gerar_ficha_pdf_interativo
 
 logger = get_logger(__name__)
 
@@ -140,6 +141,7 @@ class EquipamentosTab(QWidget):
             QMessageBox.critical(self, "Equipamentos", str(exc))
             return
         logger.info("Equipamento cadastrado: %s por %s", dados["codigo"], Sessao.usuario_atual.login)
+        audit_log.registrar("cadastro_equipamento", f"Equipamento {dados['codigo']} cadastrado")
         self.carregar()
 
     def _editar(self):
@@ -159,6 +161,7 @@ class EquipamentosTab(QWidget):
             QMessageBox.critical(self, "Equipamentos", str(exc))
             return
         logger.info("Equipamento editado: %s por %s", linha["codigo"], Sessao.usuario_atual.login)
+        audit_log.registrar("edicao_equipamento", f"Equipamento {linha['codigo']} editado")
         self.carregar()
 
     def _excluir(self):
@@ -177,6 +180,7 @@ class EquipamentosTab(QWidget):
             QMessageBox.critical(self, "Equipamentos", str(exc))
             return
         logger.info("Equipamento excluído: %s por %s", linha["codigo"], Sessao.usuario_atual.login)
+        audit_log.registrar("exclusao_equipamento", f"Equipamento {linha['codigo']} excluído")
         self.carregar()
 
     def _emprestar(self):
@@ -219,4 +223,15 @@ class EquipamentosTab(QWidget):
             "Empréstimo registrado: %s -> %s por %s",
             linha["codigo"], dados["responsavel"], Sessao.usuario_atual.login,
         )
+        audit_log.registrar(
+            "emprestimo",
+            f"Equipamento {linha['codigo']} emprestado para {dados['responsavel']}",
+        )
         self.carregar()
+
+        resposta = QMessageBox.question(
+            self, "Ficha de empréstimo",
+            "Empréstimo registrado. Deseja gerar a ficha de empréstimo em PDF agora?",
+        )
+        if resposta == QMessageBox.Yes:
+            gerar_ficha_pdf_interativo(self, emprestimo.__dict__, linha)

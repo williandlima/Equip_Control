@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from core import auth
+from core import audit_log, auth
 from core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -61,4 +61,5 @@ class LoginWindow(QWidget):
 
         logger.info("Login efetuado: %s (perfil=%s)", usuario.login, usuario.perfil)
         auth.Sessao.login(usuario)
+        audit_log.registrar("login", "Login realizado")
         self._on_login_success(usuario)

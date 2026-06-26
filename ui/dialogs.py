@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from core import auth, excel_db
+from core import audit_log, auth, excel_db
 import config
 from core.models import Equipamento, Perfil, StatusEquipamento, Usuario
 
@@ -264,6 +264,7 @@ class UsuariosManagerDialog(QDialog):
             if not criado:
                 QMessageBox.warning(self, "Usuários", "Já existe um usuário com esse login.")
                 return
+            audit_log.registrar("criacao_usuario", f"Usuário {dados['login']} criado (perfil {dados['perfil']})")
             self._carregar()
 
     def _resetar_senha(self):
@@ -274,6 +275,7 @@ class UsuariosManagerDialog(QDialog):
         nova_senha, ok = _pedir_senha(self)
         if ok and nova_senha:
             auth.alterar_senha(login, nova_senha)
+            audit_log.registrar("reset_senha", f"Senha de {login} redefinida")
             QMessageBox.information(self, "Usuários", f"Senha de '{login}' redefinida.")
 
     def _alternar_ativo(self):
@@ -287,6 +289,8 @@ class UsuariosManagerDialog(QDialog):
         excel_db.update_row(
             config.USUARIOS_FILE, Usuario.colunas(), "login", login, {"ativo": novo_valor}
         )
+        acao = "ativacao_usuario" if novo_valor == "1" else "desativacao_usuario"
+        audit_log.registrar(acao, f"Usuário {login} {'ativado' if novo_valor == '1' else 'desativado'}")
         self._carregar()
 
 

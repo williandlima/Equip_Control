@@ -80,6 +80,18 @@ class Emprestimo:
 
 
 @dataclass
+class LogAuditoria:
+    timestamp: str
+    usuario: str
+    acao: str
+    detalhe: str = ""
+
+    @classmethod
+    def colunas(cls):
+        return [f.name for f in fields(cls)]
+
+
+@dataclass
 class Usuario:
     login: str
     senha_hash: str = ""

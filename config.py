@@ -13,6 +13,10 @@ LOG_FILE = os.path.join(LOG_DIR, "app.log")
 EQUIPAMENTOS_FILE = os.path.join(DATA_DIR, "equipamentos.xlsx")
 EMPRESTIMOS_FILE = os.path.join(DATA_DIR, "emprestimos.xlsx")
 USUARIOS_FILE = os.path.join(DATA_DIR, "usuarios.xlsx")
+LOGS_FILE = os.path.join(DATA_DIR, "logs.xlsx")
+
+# Pasta padrão de sugestão ao salvar fichas de empréstimo em PDF.
+FICHAS_DIR = os.path.join(DATA_DIR, "fichas")
 
 # Tempo máximo (segundos) esperando o lock do arquivo antes de avisar o usuário.
 LOCK_TIMEOUT_SECONDS = 5

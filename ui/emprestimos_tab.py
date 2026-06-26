@@ -15,10 +15,11 @@ from PyQt5.QtWidgets import (
 )
 
 import config
-from core import excel_db
+from core import audit_log, excel_db
 from core.auth import Sessao
 from core.logger import get_logger
 from core.models import Emprestimo, Equipamento, StatusEmprestimo, StatusEquipamento
+from ui.pdf_helpers import gerar_ficha_pdf_interativo
 
 logger = get_logger(__name__)
 
@@ -64,9 +65,12 @@ class EmprestimosTab(QWidget):
         botoes = QHBoxLayout()
         self.botao_devolver = QPushButton("Devolver")
         self.botao_devolver.clicked.connect(self._devolver)
+        self.botao_ficha = QPushButton("Gerar ficha (PDF)")
+        self.botao_ficha.clicked.connect(self._gerar_ficha)
         botao_atualizar = QPushButton("Atualizar")
         botao_atualizar.clicked.connect(self.carregar)
         botoes.addWidget(self.botao_devolver)
+        botoes.addWidget(self.botao_ficha)
         botoes.addStretch()
         botoes.addWidget(botao_atualizar)
         layout.addLayout(botoes)
@@ -131,4 +135,17 @@ class EmprestimosTab(QWidget):
             "Empréstimo devolvido: %s (equipamento %s) por %s",
             linha["id"], linha["equipamento_codigo"], Sessao.usuario_atual.login,
         )
+        audit_log.registrar(
+            "devolucao", f"Equipamento {linha['equipamento_codigo']} devolvido (empréstimo {linha['id']})"
+        )
         self.carregar()
+
+    def _gerar_ficha(self):
+        linha = self._linha_selecionada()
+        if not linha:
+            QMessageBox.information(self, "Ficha de empréstimo", "Selecione um empréstimo na lista.")
+            return
+        equipamento = excel_db.find_one(
+            config.EQUIPAMENTOS_FILE, Equipamento.colunas(), "codigo", linha["equipamento_codigo"]
+        ) or {}
+        gerar_ficha_pdf_interativo(self, linha, equipamento)
