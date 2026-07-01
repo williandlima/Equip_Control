@@ -3,5 +3,7 @@ __pycache__/
 data/*.xlsx
 data/*.xlsx.lock
 data/fichas/
+.autologin
+alertas_notificados.json
 logs/*.log
 logs/*.log.*
