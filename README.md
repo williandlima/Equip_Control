@@ -8,12 +8,24 @@ usuários (2 a 5 pessoas simultâneas).
 
 ## Instalação
 
+No Windows, dê duplo clique em **`instalar_completo.bat`**. Ele faz tudo:
+
+1. Verifica se o Python está instalado.
+2. Cria o ambiente virtual (`venv\`).
+3. Instala as dependências — automaticamente **offline** (sem precisar de
+   internet) se encontrar uma pasta `libs_offline\` no projeto, ou via
+   internet caso contrário.
+4. Cria as pastas `data\`, `data\fichas\` e `logs\`.
+5. Verifica se tudo foi instalado corretamente.
+6. Pergunta se você quer usar uma pasta de rede compartilhada para os dados
+   (recomendado se várias pessoas vão usar o sistema) e já deixa configurado
+   de forma permanente.
+7. Cria um atalho **"Controle de Equipamentos"** na Área de Trabalho.
+
+Ou manualmente:
 ```bash
 pip install -r requirements.txt
 ```
-
-No Windows, `instalar.bat` cria o ambiente virtual e instala tudo
-automaticamente (duplo clique).
 
 ### Instalação em computador sem internet
 
@@ -25,19 +37,19 @@ corporativas fechadas), baixe as dependências em outro computador antes:
    suas dependências em `libs_offline\`.
 2. Copie a pasta do projeto **inteira** (incluindo `libs_offline\`) para um
    pendrive e leve para o computador da empresa.
-3. No computador sem internet, rode `instalar_offline.bat`. Ele cria o
-   ambiente virtual e instala tudo a partir de `libs_offline\`, sem
-   precisar baixar nada da internet.
+3. No computador sem internet, rode `instalar_completo.bat` normalmente —
+   ele detecta a pasta `libs_offline\` automaticamente e instala sem tentar
+   acessar a internet.
 
 **Usando com Spyder:** o Spyder normalmente roda com o Python do
-Anaconda/Miniconda, que é separado do ambiente virtual (`venv`) criado por
-esses scripts. Para usar este projeto dentro do Spyder, aponte o
-interpretador para o Python do `venv`: `Ferramentas > Preferências >
-Interpretador Python > Usar o seguinte interpretador` e selecione
-`venv\Scripts\python.exe`. Alternativamente, rode `venv\Scripts\python.exe
-main.py` direto pelo Prompt de Comando/Anaconda Prompt — como este é um
-app de janela (PyQt5), pode ser mais estável rodar fora do console
-integrado do Spyder.
+Anaconda/Miniconda, que é separado do ambiente virtual (`venv`) criado pelo
+instalador. Para usar este projeto dentro do Spyder, aponte o interpretador
+para o Python do `venv`: `Ferramentas > Preferências > Interpretador Python
+> Usar o seguinte interpretador` e selecione `venv\Scripts\python.exe`.
+Alternativamente, use o atalho criado na Área de Trabalho, ou rode
+`venv\Scripts\python.exe main.py` direto pelo Prompt de Comando/Anaconda
+Prompt — como este é um app de janela (PyQt5), pode ser mais estável rodar
+fora do console integrado do Spyder.
 
 ## Execução
 
@@ -62,12 +74,12 @@ Por padrão, as planilhas são criadas em `./data/`:
 - `usuarios.xlsx`
 
 Para usar uma pasta de rede compartilhada, defina a variável de ambiente
-`EQUIP_CONTROL_DATA_DIR` apontando para o caminho desejado antes de iniciar o
-programa, por exemplo (Windows):
+`EQUIP_CONTROL_DATA_DIR` apontando para o caminho desejado (o
+`instalar_completo.bat` já pergunta e configura isso de forma permanente).
+Para configurar manualmente:
 
 ```bat
-set EQUIP_CONTROL_DATA_DIR=\\avsfs\Equip_Control\data
-python main.py
+setx EQUIP_CONTROL_DATA_DIR \\avsfs\Equip_Control\data
 ```
 
 Cada gravação é protegida por um lock de arquivo (`<arquivo>.xlsx.lock`), que

@@ -10,7 +10,7 @@ if "%~1"=="" (
 )
 
 if not exist venv\Scripts\python.exe (
-    echo [ERRO] Ambiente virtual nao encontrado. Rode instalar.bat primeiro.
+    echo [ERRO] Ambiente virtual nao encontrado. Rode instalar_completo.bat primeiro.
     pause
     exit /b 1
 )

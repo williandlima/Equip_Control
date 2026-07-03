@@ -35,6 +35,6 @@ echo  Concluido!
 echo  Copie a pasta do projeto INTEIRA (incluindo
 echo  a pasta libs_offline) para um pendrive e leve
 echo  para o computador da empresa.
-echo  La, rode instalar_offline.bat
+echo  La, rode instalar_completo.bat (ele detecta libs_offline automaticamente)
 echo ============================================
 pause
