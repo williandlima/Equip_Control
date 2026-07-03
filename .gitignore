@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 venv/
 .venv/
+libs_offline/
 data/*.xlsx
 data/*.xlsx.lock
 data/fichas/

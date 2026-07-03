@@ -12,6 +12,33 @@ usuários (2 a 5 pessoas simultâneas).
 pip install -r requirements.txt
 ```
 
+No Windows, `instalar.bat` cria o ambiente virtual e instala tudo
+automaticamente (duplo clique).
+
+### Instalação em computador sem internet
+
+Se o computador de destino não tem acesso à internet (comum em redes
+corporativas fechadas), baixe as dependências em outro computador antes:
+
+1. Em um computador **com internet** (Windows), dentro da pasta do projeto,
+   rode `baixar_dependencias_offline.bat`. Isso baixa todos os pacotes e
+   suas dependências em `libs_offline\`.
+2. Copie a pasta do projeto **inteira** (incluindo `libs_offline\`) para um
+   pendrive e leve para o computador da empresa.
+3. No computador sem internet, rode `instalar_offline.bat`. Ele cria o
+   ambiente virtual e instala tudo a partir de `libs_offline\`, sem
+   precisar baixar nada da internet.
+
+**Usando com Spyder:** o Spyder normalmente roda com o Python do
+Anaconda/Miniconda, que é separado do ambiente virtual (`venv`) criado por
+esses scripts. Para usar este projeto dentro do Spyder, aponte o
+interpretador para o Python do `venv`: `Ferramentas > Preferências >
+Interpretador Python > Usar o seguinte interpretador` e selecione
+`venv\Scripts\python.exe`. Alternativamente, rode `venv\Scripts\python.exe
+main.py` direto pelo Prompt de Comando/Anaconda Prompt — como este é um
+app de janela (PyQt5), pode ser mais estável rodar fora do console
+integrado do Spyder.
+
 ## Execução
 
 ```bash
