@@ -34,7 +34,7 @@ COLUNAS_EXIBIDAS = [
     ("fabricante", "Fabricante"),
     ("status", "Status"),
     ("localizacao", "Localização"),
-    ("data_proxima_calibracao", "Próx. Calibração"),
+    ("usuario_departamento", "Usuário"),
     ("modelo", "Modelo"),
 ]
 

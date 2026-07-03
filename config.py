@@ -21,9 +21,6 @@ FICHAS_DIR = os.path.join(DATA_DIR, "fichas")
 # Tempo máximo (segundos) esperando o lock do arquivo antes de avisar o usuário.
 LOCK_TIMEOUT_SECONDS = 5
 
-# Quantos dias antes do vencimento um equipamento entra em alerta de calibração.
-ALERTA_CALIBRACAO_DIAS = 15
-
 # Intervalo (ms) de recálculo automático dos alertas.
 ALERTA_INTERVALO_MS = 30 * 60 * 1000
 

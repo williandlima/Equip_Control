@@ -1,6 +1,4 @@
 """Diálogos modais: cadastro de equipamento, novo empréstimo, gestão de usuários."""
-from datetime import date, datetime
-
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import (
     QComboBox,
@@ -22,16 +20,6 @@ from PyQt5.QtWidgets import (
 from core import audit_log, auth, excel_db
 import config
 from core.models import Equipamento, Perfil, StatusEquipamento, Usuario
-
-
-def _validar_data(texto: str) -> bool:
-    if not texto.strip():
-        return True
-    try:
-        datetime.strptime(texto.strip(), "%Y-%m-%d")
-        return True
-    except ValueError:
-        return False
 
 
 class EquipamentoDialog(QDialog):
@@ -71,13 +59,13 @@ class EquipamentoDialog(QDialog):
         form.addRow("Status:", combo_status)
         self._campos["status"] = combo_status
 
-        add_linha("descricao_status", "Descrição do status:")
-        add_linha("periodicidade_calibracao_meses", "Periodicidade calibração (meses):")
-        add_linha("data_ultima_calibracao", "Última calibração (AAAA-MM-DD):")
-        add_linha("data_proxima_calibracao", "Próxima calibração (AAAA-MM-DD):")
+        add_linha("codigo_status", "Código do status (interno):")
+        add_linha("calibrado_por", "Calibrado por:")
+        add_linha("usuario_departamento", "Usuário/Departamento:")
         add_linha("localizacao", "Localização:")
         add_linha("instalacao", "Instalação:")
-        add_linha("condicionamento", "Condicionamento:")
+        add_linha("instalacao_secundaria", "Instalação (2):")
+        add_linha("gerencia", "Gerência:")
         add_linha("modelo", "Modelo:")
         add_linha("local_calibracao", "Local de calibração:")
 
@@ -93,12 +81,6 @@ class EquipamentoDialog(QDialog):
         if not dados["codigo"].strip():
             QMessageBox.warning(self, "Validação", "Informe o código do equipamento.")
             return
-        for campo_data in ("data_ultima_calibracao", "data_proxima_calibracao"):
-            if not _validar_data(dados[campo_data]):
-                QMessageBox.warning(
-                    self, "Validação", f"Data inválida em '{campo_data}'. Use AAAA-MM-DD."
-                )
-                return
         self.accept()
 
     def dados(self) -> dict:

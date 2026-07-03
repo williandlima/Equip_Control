@@ -9,8 +9,12 @@ class StatusEquipamento:
     EMPRESTADO = "Emprestado"
     CALIBRACAO_VENCIDA = "Calibração Vencida"
     AGUARDANDO_CALIBRACAO = "Aguardando Calibração"
+    AGUARDANDO_AVALIACAO = "Aguardando Avaliação"
     FORA_DE_USO = "Fora de Uso"
     DESCALIBRADO = "Descalibrado"
+    ISENTO = "Isento"
+    SUCATA = "Sucata"
+    DESAPARECIDO = "Desaparecido"
 
     TODOS = [
         DISPONIVEL,
@@ -18,8 +22,12 @@ class StatusEquipamento:
         EMPRESTADO,
         CALIBRACAO_VENCIDA,
         AGUARDANDO_CALIBRACAO,
+        AGUARDANDO_AVALIACAO,
         FORA_DE_USO,
         DESCALIBRADO,
+        ISENTO,
+        SUCATA,
+        DESAPARECIDO,
     ]
 
 
@@ -46,13 +54,13 @@ class Equipamento:
     fabricante: str = ""
     fornecedor: str = ""
     status: str = StatusEquipamento.DISPONIVEL
-    descricao_status: str = ""
-    periodicidade_calibracao_meses: str = ""
-    data_ultima_calibracao: str = ""
-    data_proxima_calibracao: str = ""
+    codigo_status: str = ""
+    calibrado_por: str = ""
+    usuario_departamento: str = ""
     localizacao: str = ""
     instalacao: str = ""
-    condicionamento: str = ""
+    instalacao_secundaria: str = ""
+    gerencia: str = ""
     modelo: str = ""
     local_calibracao: str = ""
 

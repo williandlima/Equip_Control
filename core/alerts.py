@@ -1,16 +1,24 @@
-"""Regras de alerta: calibração vencendo/vencida e empréstimo atrasado."""
+"""Regras de alerta: status de calibração e empréstimo atrasado."""
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from typing import Optional
 
 import config
 from core import excel_db
 from core.logger import get_logger
-from core.models import Emprestimo, Equipamento, StatusEmprestimo
+from core.models import Emprestimo, Equipamento, StatusEmprestimo, StatusEquipamento
 
 logger = get_logger(__name__)
 
 _DATE_FORMATS = ("%Y-%m-%d", "%d/%m/%Y")
+
+# Status de equipamento que geram alerta, e o nível de severidade de cada um.
+_STATUS_ALERTA = {
+    StatusEquipamento.CALIBRACAO_VENCIDA: ("calibracao_vencida", "critico", "Calibração vencida"),
+    StatusEquipamento.AGUARDANDO_CALIBRACAO: ("aguardando_calibracao", "atencao", "Aguardando calibração"),
+    StatusEquipamento.AGUARDANDO_AVALIACAO: ("aguardando_avaliacao", "atencao", "Aguardando avaliação"),
+    StatusEquipamento.DESAPARECIDO: ("equipamento_desaparecido", "critico", "Equipamento desaparecido"),
+}
 
 
 def _parse_data(valor) -> Optional[date]:
@@ -41,35 +49,24 @@ class Alerta:
 def calcular_alertas() -> list[Alerta]:
     alertas: list[Alerta] = []
     hoje = date.today()
-    limite_aviso = hoje + timedelta(days=config.ALERTA_CALIBRACAO_DIAS)
 
     equipamentos = excel_db.read_all(config.EQUIPAMENTOS_FILE, Equipamento.colunas())
     for eq in equipamentos:
-        data_proxima = _parse_data(eq.get("data_proxima_calibracao"))
-        if data_proxima is None:
+        status = eq.get("status", "")
+        info = _STATUS_ALERTA.get(status)
+        if info is None:
             continue
+        tipo, nivel, rotulo = info
         codigo = eq.get("codigo", "")
         descricao = eq.get("descricao", "")
-        if data_proxima < hoje:
-            alertas.append(
-                Alerta(
-                    tipo="calibracao_vencida",
-                    nivel="critico",
-                    referencia=codigo,
-                    mensagem=f"Calibração vencida: {codigo} - {descricao} "
-                    f"(venceu em {data_proxima.strftime('%d/%m/%Y')})",
-                )
+        alertas.append(
+            Alerta(
+                tipo=tipo,
+                nivel=nivel,
+                referencia=codigo,
+                mensagem=f"{rotulo}: {codigo} - {descricao}",
             )
-        elif data_proxima <= limite_aviso:
-            alertas.append(
-                Alerta(
-                    tipo="calibracao_vencendo",
-                    nivel="atencao",
-                    referencia=codigo,
-                    mensagem=f"Calibração vencendo: {codigo} - {descricao} "
-                    f"(vence em {data_proxima.strftime('%d/%m/%Y')})",
-                )
-            )
+        )
 
     emprestimos = excel_db.read_all(config.EMPRESTIMOS_FILE, Emprestimo.colunas())
     for emp in emprestimos:
